@@ -78,7 +78,6 @@ Assessment;
 }
 .operationType {
   font-family: ubuntu-medium;
-  font-size: 13px;
   line-height: 13px;
   letter-spacing: -0.47px;
 }
@@ -100,8 +99,10 @@ Assessment;
 .date {
   width: 150px;
 }
-td {
+.table td {
   text-align: left;
+  vertical-align: middle;
+  font-size: 13px;
 }
 svg {
   margin-right: 10px;
