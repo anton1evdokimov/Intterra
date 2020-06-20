@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <h2>Операции на поле 112</h2>
-    <ButtonRow />
+    <ButtonRow v-on:checkRadio="checkRadio" />
     <MainTable
       v-bind:operations="operations"
       v-bind:sortType="sortType"
@@ -41,9 +41,11 @@ Month.set(11, "ДЕК");
   components: { MainTable, ButtonRow }
 })
 export default class extends Vue {
-  operations: any = [];
+  operations: Array<OperationRow> = [];
+  operationsList: Array<OperationRow> = [];
   sortType = true;
   sortField = "rawDate";
+
   sortData(sortField: keyof OperationRow) {
     this.operations = _.orderBy(
       this.operations,
@@ -54,10 +56,16 @@ export default class extends Vue {
     this.sortType = !this.sortType;
   }
 
+  checkRadio(isCompleted: boolean) {
+    this.operations = this.operationsList.filter(
+      x => x.completed === isCompleted
+    );
+  }
+
   async loadOperations() {
     const local: { [key: string]: string } = locales;
     const operations = await fieldService.getOperations();
-    this.operations = _.orderBy(
+    this.operationsList = _.orderBy(
       operations.map(item => ({
         assessment: item.assessment,
         assessmentString:
@@ -65,6 +73,7 @@ export default class extends Vue {
             ? local[Assessment[item.assessment]]
             : "Нет оценки",
         culture: "Пшеница озимая",
+        completed: true,
         type: local[OperationType[item.type]],
         rawDate: new Date(item.date.year, item.date.month, item.date.day),
         stringDate: `${item.date.day} ${Month.get(item.date.month)} ${
@@ -75,6 +84,7 @@ export default class extends Vue {
       this.sortType ? "asc" : "desc"
     );
     this.sortType = !this.sortType;
+    this.operations = this.operationsList.filter(x => x.completed);
   }
 
   async mounted() {
@@ -90,6 +100,12 @@ export default class extends Vue {
   font-style: normal;
   src: url("../fonts/ubuntu/Ubuntu-Regular.ttf");
 }
+@font-face {
+  font-family: ubuntu-medium;
+  font-weight: 500;
+  font-style: normal;
+  src: url("../fonts/ubuntu/Ubuntu-Medium.ttf");
+}
 #app {
   font-family: Ubuntu, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -99,5 +115,11 @@ export default class extends Vue {
   margin: 60px auto;
   width: 100%;
   max-width: 839px;
+}
+h2 {
+  font-family: ubuntu-medium;
+  text-align: left;
+  font-size: 25px;
+  line-height: 31px;
 }
 </style>

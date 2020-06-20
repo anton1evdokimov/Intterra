@@ -1,7 +1,7 @@
 <template>
   <tr>
     <td class="date">{{operation.stringDate}}</td>
-    <td>{{operation.type}}</td>
+    <td class="operationType">{{operation.type}}</td>
     <td>
       <svg
         width="30"
@@ -76,6 +76,12 @@ Assessment;
   display: inline-block;
   margin-right: 10px;
 }
+.operationType {
+  font-family: ubuntu-medium;
+  font-size: 13px;
+  line-height: 13px;
+  letter-spacing: -0.47px;
+}
 .noRating {
   opacity: 0.3;
 }
@@ -96,5 +102,8 @@ Assessment;
 }
 td {
   text-align: left;
+}
+svg {
+  margin-right: 10px;
 }
 </style>

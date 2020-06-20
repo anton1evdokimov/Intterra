@@ -82,7 +82,11 @@ export default {
   background-color: #edeeee;
 }
 .header > th {
+  font-family: ubuntu-medium;
   text-align: left;
   cursor: pointer;
+  font-size: 13px;
+  line-height: 13px;
+  letter-spacing: -0.517647px;
 }
 </style>
