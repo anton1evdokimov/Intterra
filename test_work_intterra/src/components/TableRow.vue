@@ -50,7 +50,7 @@
       }"
     >
       <span class="assessment"></span>
-      {{operation.assessmentString}}
+      <div>{{operation.assessmentString}}</div>
     </td>
   </tr>
 </template>
@@ -81,7 +81,8 @@ Assessment;
   line-height: 13px;
   letter-spacing: -0.47px;
 }
-.noRating {
+.noRating > div {
+  display: inline;
   opacity: 0.3;
 }
 .noRating > span {
