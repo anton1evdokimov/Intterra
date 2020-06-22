@@ -13,29 +13,18 @@
 
 <script lang="ts">
 import Vue from "vue";
-import MainTable from "@/components/MainTable.vue";
-import ButtonRow from "@/components/ButtonRow.vue";
-import FieldService from "./FieldService";
-import Operation, { OperationType, Assessment } from "./models/Operation";
-import { OperationRow } from "./interfaces";
 import Component from "vue-class-component";
-import locales from "../locales/intterra-ru-RU.json";
 import _ from "lodash";
 
+import ButtonRow from "@/components/ButtonRow.vue";
+import FieldService from "./FieldService";
+import locales from "../locales/intterra-ru-RU.json";
+import MainTable from "@/components/MainTable.vue";
+import {MonthMapper} from './mappers/monthMapper';
+import Operation, { OperationType, Assessment } from "./models/Operation";
+import { OperationRow } from "./interfaces";
+
 const fieldService = new FieldService();
-const Month = new Map<number, string>();
-Month.set(0, "ЯНВ");
-Month.set(1, "ФЕВ");
-Month.set(2, "МАР");
-Month.set(3, "АПР");
-Month.set(4, "МАЯ");
-Month.set(5, "ИЮН");
-Month.set(6, "ИЮЛ");
-Month.set(7, "АВГ");
-Month.set(8, "СЕН");
-Month.set(9, "ОКТ");
-Month.set(10, "НОЯБ");
-Month.set(11, "ДЕК");
 
 @Component({
   components: { MainTable, ButtonRow }
@@ -65,21 +54,29 @@ export default class extends Vue {
   async loadOperations() {
     const local: { [key: string]: string } = locales;
     const operations = await fieldService.getOperations();
+    const dateNow = new Date();
     this.operationsList = _.orderBy(
-      operations.map(item => ({
-        assessment: item.assessment,
-        assessmentString:
-          item.assessment !== null && item.assessment !== undefined
-            ? local[Assessment[item.assessment]]
-            : "Нет оценки",
-        culture: "Пшеница озимая",
-        completed: true,
-        type: local[OperationType[item.type]],
-        rawDate: new Date(item.date.year, item.date.month, item.date.day),
-        stringDate: `${item.date.day} ${Month.get(item.date.month)} ${
-          item.date.year
-        }`
-      })),
+      operations.map(item => {
+        const rawDate = new Date(
+          item.date.year,
+          item.date.month,
+          item.date.day
+        );
+        return {
+          assessment: item.assessment,
+          assessmentString:
+            item.assessment !== null && item.assessment !== undefined
+              ? local[Assessment[item.assessment]]
+              : "Нет оценки",
+          culture: "Пшеница озимая",
+          completed: rawDate < dateNow,
+          type: local[OperationType[item.type]],
+          rawDate,
+          stringDate: `${item.date.day} ${MonthMapper.get(item.date.month)} ${
+            item.date.year
+          }`
+        };
+      }),
       this.sortField,
       this.sortType ? "asc" : "desc"
     );
